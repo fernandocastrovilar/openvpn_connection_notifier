@@ -1,0 +1,8 @@
+{
+    "notifications":{
+        "username":"example@example.com",
+        "password":"SuperSecurePASS",
+        "recipient":"@example.com",
+        "smtp_server": "smtp.gmail.com"
+    }
+}
