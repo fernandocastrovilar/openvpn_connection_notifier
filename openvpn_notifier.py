@@ -80,7 +80,11 @@ def op_to_db(user, ip, op):
 def db_user_check(user, ip):
     """check if user is already on bd, if is check if IP change to notify or not"""
     out = op_to_db(user=user, ip=ip, op="read")
-    if not out or out == "ko":
+    if out == "ko":
+        os.popen("rm /tmp/openvpn_users.db")
+        init_db()
+        out = op_to_db(user=user, ip=ip, op="read")
+    if not out:
         result = op_to_db(user=user, ip=ip, op="write")
     elif str(ip) in str(out):
         result = "ko"
