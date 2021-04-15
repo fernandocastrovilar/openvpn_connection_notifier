@@ -9,6 +9,7 @@ import smtplib
 import sqlite3
 import argparse
 from dateutil.parser import parse
+from ip2geotools.databases.noncommercial import DbIpCity
 
 
 def get_users_list():
@@ -119,6 +120,13 @@ def send_email(subject, msg, recipients):
     return "ok"
 
 
+def iplocation(ip):
+    """Serch IP location"""
+    data = DbIpCity.get(ip, api_key='free')
+    location = data.region + "," + data.country
+    return location
+
+
 def notify():
     """notify users connected in last 1 min"""
     users_list = get_users_list()
@@ -131,14 +139,15 @@ def notify():
             username = user[0]
             connected_since = user[6]
             real_ip = user[1].split(":", 1)[0]
+            location = iplocation(ip=real_ip)
             out = db_user_check(user=username, ip=real_ip)
             if out == "ko":
                 continue
             print("Notifying {0}".format(username))
             subject = "Correct access to VPN"
             msg = "Dear {0},\n\nRecently happened a correct login into your VPN account using the next data:\n\n" \
-                  "- Username: {0}\n- Real IP: {1}\n- Date: {2}\n\nIf you don't recognize this login, please, " \
-                  "contact your sysadmin and change your password.".format(username, real_ip, connected_since)
+                  "- Username: {0}\n- Real IP: {1}\n- Location: {2}\n- Date: {3}\n\nIf you don't recognize this login, please, " \
+                  "contact your sysadmin and change your password.".format(username, real_ip, location, connected_since)
             send_email(subject=subject, msg=msg, recipients=username)
     print("- Done")
     return "ok"
