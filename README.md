@@ -5,6 +5,7 @@ Before notify, checks in a sqlite if the IP of user has changed. If not, it won'
 
 ## Setup
 Install requirements.txt
+
 Edit config.json to setup your smtp account.
 
 Launch the script with "-t initdb" option to initialize the DB.
